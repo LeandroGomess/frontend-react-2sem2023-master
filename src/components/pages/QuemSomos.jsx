@@ -10,9 +10,10 @@ import Form from 'react-bootstrap/Form'
 
 
 const QuemSomos = () => {
+
     const [users, setUsers] = useState([])
     const [showModal, setShowModal] = useState(false)
-     
+
     useEffect(()=>{
       
       const getUsers = async () => {
@@ -22,19 +23,21 @@ const QuemSomos = () => {
         console.log(data.users)
         setUsers(data.users)
       }
-      getUsers()
 
+      getUsers()
+      
     }, [])
 
     const handleSubmit = async (event) => {
       event.preventDefault()
+      
       const newUser = {
         name: event.target.name.value,
         email: event.target.email.value,
-        password: event.target.password.value,
+        pass: event.target.pass.value,
         photo: event.target.photo.value
       }
-
+      
       const response = await fetch('http://localhost:3300/user',{
         method: 'POST',
         headers: {
@@ -48,7 +51,6 @@ const QuemSomos = () => {
         alert(data.success)
         setShowModal(false)
         setUsers([...users, data.user])
-
       }
     }  
 
@@ -60,6 +62,7 @@ const QuemSomos = () => {
             <Content>
               <h1>Quem Somos</h1>
               <Button as="button" variant="primary" onClick={() => setShowModal(true)}>Cadastrar Usuário</Button>
+
               <Modal
                 show={showModal}
                 onHide={() => setShowModal(false)}
@@ -84,7 +87,7 @@ const QuemSomos = () => {
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label>Senha</Form.Label>
-                      <Form.Control type="password" name="password" />
+                      <Form.Control type="password" name="pass" />
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label>URL Foto</Form.Label>
@@ -97,10 +100,14 @@ const QuemSomos = () => {
                   <Button onClick={() => setShowModal(false)}>Close</Button>
                 </Modal.Footer>
               </Modal>
+
               {
-                users.length > 0 ? users.map((user) => {
-                  return <CardUser key={user.id} user={user} />
-                }): <p>Carregando...</p>
+                users.length > 0 ?
+                  users.map((user) => {
+                    return <CardUser key={user.id} user={user} users={users} setUsers={setUsers} />
+                  })
+                :
+                  <p>Carregando...</p>
               }
             </Content>
         </div>
@@ -108,4 +115,5 @@ const QuemSomos = () => {
     </>
   )
 }
+
 export default QuemSomos
